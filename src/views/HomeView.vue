@@ -6,6 +6,10 @@
   function stepDone (activity) {
     activitiesStore.elevateActivity(activity)
   }
+
+  function backStep (activity) {
+    activitiesStore.sinkActivity(activity)
+  }
 </script>
 
 <template>
@@ -53,6 +57,10 @@
             <v-row class="d-flex justify-space-between pa-2 align-center" dense>
               {{ activity.title }}
               <v-btn class="rounded-pill" text="Step done" variant="tonal" @click="stepDone(activity)" />
+            </v-row>
+            <v-row class="d-flex justify-space-between pa-2 align-center" dense>
+              {{ activity.title }}
+              <v-btn class="rounded-pill" text="Back Step" variant="tonal" @click="backStep(activity)" />
             </v-row>
           </v-card-item>
         </v-card>

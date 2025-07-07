@@ -1,4 +1,3 @@
-// Utilities
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
@@ -68,11 +67,11 @@ export const useActivitiesStore = defineStore('activities', () => {
     activities.value.filter(activity => activity.status === 'done'),
   )
 
-  function elevateActivity(activity) {
+  function ariseActivity(activity) {
     const index = activities.value.findIndex(a => a.id === activity.id)
     if (index === -1) {
       return
-    } // Atividade não encontrada
+    }
 
     const current = activities.value[index]
 
@@ -98,28 +97,61 @@ export const useActivitiesStore = defineStore('activities', () => {
 
         break
       }
-      // No default
     }
 
     current.updatedAt = new Date().toISOString()
   }
 
-  function addActivity(activity) {
-    activities.value.push({
-      ...activity,
-      id: activities.value.length + 1,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    })
-  }
+  function sinkActivity(activity) {
+    const index = activities.value.findIndex(a => a.id === activity.id)
+    if (index === -1) {
+      return
+    }
 
-  return {
-    defaultActivity,
-    todoActivities,
-    doingActivities,
-    reviseActivities,
-    doneActivities,
-    elevateActivity,
-    addActivity,
+    const current = activities.value[index]
+
+    switch (current.status) {
+      case 'doing': {
+        current.status = 'todo'
+        todoActivities.value.push(current)
+        doingActivities.value = doingActivities.value.filter(a => a.id !== activity.id)
+
+        break
+      }
+      case 'to revise': {
+        current.status = 'doing'
+        doingActivities.value.push(current)
+        reviseActivities.value = reviseActivities.value.filter(a => a.id !== activity.id)
+
+        break
+      }
+      case 'done': {
+        current.status = 'to revise'
+        reviseActivities.value.push(current)
+        doneActivities.value = doneActivities.value.filter(a => a.id !== activity.id)
+
+        break
+      }
+    }
+
+    function addActivity(activity) {
+      activities.value.push({
+        ...activity,
+        id: activities.value.length + 1,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      })
+    }
+
+    return {
+      defaultActivity,
+      todoActivities,
+      doingActivities,
+      reviseActivities,
+      doneActivities,
+      ariseActivity,
+      addActivity,
+      sinkActivity,
+    }
   }
 })
